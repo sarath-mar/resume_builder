@@ -1,0 +1,30 @@
+* .UserDashboard-header {
+  background-color: black;
+  padding: 15px;
+  color: white;
+  display: flex;
+  justify-content: center;
+  position: sticky;
+  top: 0px;
+  z-index: 999;
+}
+.hired-faster {
+  color: white;
+  font-size: 25px;
+  font-weight: 500;
+}
+.new {
+  color: white;
+  font-size: 25px;
+  font-weight: 500;
+  color: rgb(151, 236, 163);
+  text-decoration: underline;
+}
+.dashboard-login {
+  float: right;
+  margin: 10px;
+}
+.header-login {
+  float: right;
+padding: 10px;
+}

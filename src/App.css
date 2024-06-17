@@ -1,0 +1,43 @@
+* {
+  margin: 0;
+  padding: 0;
+  --blue-color:rgb(0, 40, 120);
+  --orange-color:rgb(255, 110, 1);
+  --green-color:green;
+  --black-color:black;
+  --danger-color:red;
+  --selection-color:white;
+
+  --un-selected-color:#dcdbe0 !important;
+  --icon-color:rgb(185, 185, 185);
+  --primary-t-color:#384347;
+  -webkit-transition: all .3s linear;
+  -moz-transition: all .3s linear;
+  -o-transition: all .3s linear;
+  transition: all .3s linear;
+}
+.outer-spacing {
+  padding-inline: 100px;
+}
+.g-1 {
+  gap: 4px;
+}
+.g-2 {
+  gap: 8px;
+}
+.g-3 {
+  gap: 12px;
+}
+.c-pointer{
+  cursor: pointer;
+}
+@media screen and (max-width: 1200px) {
+  .outer-spacing {
+    padding-inline: 60px;
+  }
+}
+@media screen and (max-width: 900px) {
+  .outer-spacing {
+    padding-inline: 20px;
+  }
+}
