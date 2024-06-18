@@ -1,8 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import ListGroup from "react-bootstrap/ListGroup";
 import Image from "react-bootstrap/Image";
-
+import Dropdown from "react-bootstrap/Dropdown";
 import Form from "react-bootstrap/Form";
+import Switch from "../../../../CommonComponents/Switch";
+import "./TemplateHeader.css";
 function TemplateHeader({
   isEdit,
   templateDetails,
@@ -54,13 +62,31 @@ function TemplateHeader({
     ROLE: "ROLE",
     CONTACT_DETAILS: "CONTACT_DETAILS",
     CONTACT_DETAILS_ICONS: "CONTACT_DETAILS_ICONS",
+    USER_IMAGE: "USER_IMAGE",
   };
+  const fileInputRef = useRef(null);
+  const [displayDetails, setDisplayDetails] = useState({
+    image: true,
+    extraLink: true,
+  });
+  const [openSettings, setOpenSettings] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(
+    "https://cdn4.iconfinder.com/data/icons/mayssam/512/user-512.png"
+  );
+
   useEffect(() => {
     console.log("isedit");
     if (!isEdit) {
       setEditField("");
+      setOpenSettings(false);
     }
   }, [isEdit]);
+  const fileUploaderClick = () => {
+    fileInputRef.current.click();
+  };
+  const handleImageChange = (event) => {
+    setSelectedImage(URL.createObjectURL(event.target.files[0]));
+  };
   const addCDetails = () => {
     let data = {
       id: contactDetails[contactDetails.length - 1].id + 1,
@@ -119,6 +145,12 @@ function TemplateHeader({
     const maxLength = content.length;
     return `${maxLength * 8 + 4}px`;
   };
+  const toggleImage = () => {
+    console.log("called");
+    setDisplayDetails((preVal) => {
+      return { ...preVal, image: !preVal.image };
+    });
+  };
   const getContactDetails = useMemo(() => {
     if (isEdit) {
       return contactDetails;
@@ -126,138 +158,161 @@ function TemplateHeader({
     return contactDetails.filter((x) => x.value);
   }, [isEdit, contactDetails]);
   return (
-    <div
-      className={`t-header-section p-2 ${
-        editField ? "t-section-edit" : "t-section"
-      }`}
-    >
-      <div className="t-header-left">
-        <div className="t-name-section">
-          {editField === availableEditFields.NAME ? (
-            <Form.Control
-              onChange={changeTemplateDetails}
-              plaintext
-              name="name"
-              placeholder="Your Name"
-              className={`t-name t-input t-input-name `}
-            />
-          ) : (
-            <div
-              onClick={() => {
-                onChangeEditField(availableEditFields.NAME);
-                setSelectedContactId(0);
-              }}
-              className={`t-name  ${templateDetails.name ? "" : "o-6"}`}
-            >
-              {templateDetails.name || "Your Name"}
+    <div>
+      <div className={`t-edit ${editField ? "t-show" : "t-hidden"}`}>
+        <i
+          className="bi bi-gear c-pointer"
+          onClick={() => setOpenSettings(!openSettings)}
+        ></i>
+        <Dropdown.Menu show={openSettings} className="t-setting-sect">
+          <div className="t-sect-list px-4">
+            {" "}
+            <div>Show Image</div>
+            <div>
+              <Switch checked={displayDetails.image} onChange={toggleImage} />
             </div>
-          )}
-        </div>
-        <div className="t-job-position-section">
-          {editField == availableEditFields.ROLE ? (
-            <Form.Control
-              name="role"
-              onChange={changeTemplateDetails}
-              plaintext
-              placeholder="The role you are applying for ?"
-              className="t-role t-input t-input-role"
-            />
-          ) : (
-            <div
-              onClick={() => {
-                onChangeEditField(availableEditFields.ROLE);
-                setSelectedContactId(0);
-              }}
-              className={`t-role  ${templateDetails.role ? "" : "o-6"}`}
-            >
-              {templateDetails.role || "The role you are applying for ?"}
-            </div>
-          )}
-        </div>
-        <div className="t-cDetails-list mt-1 ">
-          {/* onClick={() => onChangeEditField(availableEditFields.CONTACT_DETAILS)} */}
-          {getContactDetails.map((cDetails, i) => (
-            <div
-              className={`t-c-details ${
-                selectedContactId === cDetails.id && isEdit
-                  ? "t-c-details-select"
-                  : ""
-              }`}
-              key={i}
-            >
-              {selectedContactId === cDetails.id && isEdit && (
-                <i
-                  onClick={() => deleteCDetails(cDetails.id)}
-                  className={`bi bi-x-circle-fill t-icon c-pointer t-icon-c-delete`}
-                ></i>
-              )}
-              <div>
-                <i
-                  onClick={() => {
-                    setSelectedContactId(cDetails.id);
+          </div>
+        </Dropdown.Menu>
+      </div>
 
-                    onChangeEditField(
-                      availableEditFields.CONTACT_DETAILS_ICONS
-                    );
-                    showContactDetailsField(cDetails.id, "showIcons");
-                  }}
-                  className={`bi ${cDetails.icon} t-icon c-pointer`}
-                ></i>
-                {cDetails.showIcons && (
-                  <ListGroup className="t-icons-available">
-                    {availableIcons.map((availableIcon) => (
-                      <i
-                        onClick={() => {
-                          iconSelected(availableIcon.id, cDetails.id);
-                        }}
-                        key={availableIcon.id}
-                        className={`bi ${availableIcon.icon} c-pointer`}
-                      ></i>
-                    ))}
-                  </ListGroup>
-                )}
+      <div
+        className={`t-header-section p-2 ${
+          editField ? "t-section-edit" : "t-section"
+        }`}
+      >
+        <div className="t-header-left">
+          <div className="t-name-section">
+            {editField === availableEditFields.NAME ? (
+              <Form.Control
+                onChange={changeTemplateDetails}
+                plaintext
+                name="name"
+                placeholder="Your Name"
+                className={`t-name t-input t-input-name `}
+              />
+            ) : (
+              <div
+                onClick={() => {
+                  onChangeEditField(availableEditFields.NAME);
+                  setSelectedContactId(0);
+                }}
+                className={`t-name  ${templateDetails.name ? "" : "o-6"}`}
+              >
+                {templateDetails.name || "Your Name"}
               </div>
-              <div>
-                {editField == availableEditFields.CONTACT_DETAILS &&
-                cDetails.editText ? (
-                  <Form.Control
-                    name={cDetails.name}
-                    onChange={(e) =>
-                      changeCNameDetails(cDetails.id, e.target?.value)
-                    }
-                    style={{ width: getWidth(cDetails.value || cDetails.name) }}
-                    plaintext
-                    placeholder={cDetails.value || cDetails.name}
-                    className="t-input t-input-c-details"
-                  />
-                ) : (
-                  <div
-                    className={cDetails.value ? "t-c-detail-value" : ""}
+            )}
+          </div>
+          <div className="t-job-position-section">
+            {editField == availableEditFields.ROLE ? (
+              <Form.Control
+                name="role"
+                onChange={changeTemplateDetails}
+                plaintext
+                placeholder="The role you are applying for ?"
+                className="t-role t-input t-input-role"
+              />
+            ) : (
+              <div
+                onClick={() => {
+                  onChangeEditField(availableEditFields.ROLE);
+                  setSelectedContactId(0);
+                }}
+                className={`t-role  ${templateDetails.role ? "" : "o-6"}`}
+              >
+                {templateDetails.role || "The role you are applying for ?"}
+              </div>
+            )}
+          </div>
+          <div className="t-cDetails-list mt-1 ">
+            {/* onClick={() => onChangeEditField(availableEditFields.CONTACT_DETAILS)} */}
+            {getContactDetails.map((cDetails, i) => (
+              <div
+                className={`t-c-details ${
+                  selectedContactId === cDetails.id && isEdit
+                    ? "t-c-details-select"
+                    : ""
+                }`}
+                key={i}
+              >
+                {selectedContactId === cDetails.id && isEdit && (
+                  <i
+                    onClick={() => deleteCDetails(cDetails.id)}
+                    className={`bi bi-x-circle-fill t-icon c-pointer t-icon-c-delete`}
+                  ></i>
+                )}
+                <div>
+                  <i
                     onClick={() => {
                       setSelectedContactId(cDetails.id);
-                      showContactDetailsField(cDetails.id, "editText");
-                      onChangeEditField(availableEditFields.CONTACT_DETAILS);
+
+                      onChangeEditField(
+                        availableEditFields.CONTACT_DETAILS_ICONS
+                      );
+                      showContactDetailsField(cDetails.id, "showIcons");
                     }}
-                  >
-                    {cDetails.value || cDetails.name}
-                  </div>
-                )}
+                    className={`bi ${cDetails.icon} t-icon c-pointer`}
+                  ></i>
+                  {cDetails.showIcons && (
+                    <ListGroup className="t-icons-available">
+                      {availableIcons.map((availableIcon) => (
+                        <i
+                          onClick={() => {
+                            iconSelected(availableIcon.id, cDetails.id);
+                          }}
+                          key={availableIcon.id}
+                          className={`bi ${availableIcon.icon} c-pointer`}
+                        ></i>
+                      ))}
+                    </ListGroup>
+                  )}
+                </div>
+                <div>
+                  {editField == availableEditFields.CONTACT_DETAILS &&
+                  cDetails.editText ? (
+                    <Form.Control
+                      name={cDetails.name}
+                      onChange={(e) =>
+                        changeCNameDetails(cDetails.id, e.target?.value)
+                      }
+                      style={{
+                        width: getWidth(cDetails.value || cDetails.name),
+                      }}
+                      plaintext
+                      placeholder={cDetails.value || cDetails.name}
+                      className="t-input t-input-c-details"
+                    />
+                  ) : (
+                    <div
+                      className={cDetails.value ? "t-c-detail-value" : ""}
+                      onClick={() => {
+                        setSelectedContactId(cDetails.id);
+                        showContactDetailsField(cDetails.id, "editText");
+                        onChangeEditField(availableEditFields.CONTACT_DETAILS);
+                      }}
+                    >
+                      {cDetails.value || cDetails.name}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-          {isEdit && (
-            <i
-              onClick={addCDetails}
-              className={`bi bi-plus-circle t-icon c-pointer t-add-icon-details`}
-            ></i>
-          )}
+            ))}
+            {isEdit && (
+              <i
+                onClick={addCDetails}
+                className={`bi bi-plus-circle t-icon c-pointer t-add-icon-details`}
+              ></i>
+            )}
+          </div>
         </div>
-      </div>
-      <div className={`t-header-right ${avatarShape} d-flex`}>
-        {/* {isEdit && ( */}
-          <div className={`t-user-edit-sec ${isEdit ? "t-show":"t-hidden"}`}>
+        <div
+          className={`t-header-right ${avatarShape} d-flex ${
+            displayDetails.image ? "t-show" : "t-hidden"
+          }`}
+        >
+          <div className={`t-user-edit-sec ${isEdit ? "t-show" : "t-hidden"}`}>
             {Object.values(availableAvatarShapes).map((x) => (
               <Form.Check
+                key={x}
                 inline
                 name="avatar-img"
                 checked={avatarShape === x}
@@ -266,11 +321,27 @@ function TemplateHeader({
               />
             ))}
           </div>
-        <div className="t-user-image-sec">
-          <Image
-            className="t-user-image"
-            src="https://cdn4.iconfinder.com/data/icons/mayssam/512/user-512.png"
-          />
+          <div
+            className="t-user-image-sec c-pointer"
+            onClick={() => onChangeEditField(availableEditFields.USER_IMAGE)}
+          >
+            <div className="t-image-on-hover">
+              <div className="t-image-upload" onClick={fileUploaderClick}>
+                <i className="bi bi-upload"></i>
+              </div>
+              <div className="t-image-hide" onClick={toggleImage}>
+                <i className="bi bi-eye-slash"></i>
+              </div>
+            </div>
+            <input
+              type="file"
+              onChange={handleImageChange}
+              ref={fileInputRef}
+              style={{ display: "none" }}
+            />
+
+            <Image className="t-user-image" src={selectedImage} />
+          </div>
         </div>
       </div>
     </div>

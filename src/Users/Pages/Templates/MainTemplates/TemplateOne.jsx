@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import TemplateHeader from "../Components/TemplateHeader";
+import { Col, Row } from "react-bootstrap";
 function TemplateOne() {
-  const tBgImage =
-    "https://app.enhancv.com/images/09-8e662724fe388838f317.png";
+  const tBgImage = "https://app.enhancv.com/images/09-8e662724fe388838f317.png";
 
   const [templateDetails, setTemplateDetails] = useState({
     name: "",
@@ -33,26 +33,31 @@ function TemplateOne() {
   return (
     <div
       style={{
-         background: `url(${tBgImage})`,
+        background: `url(${tBgImage})`,
         //  backgroundImage: `url(${tBgImage})`,
-      backgroundSize: 'cover', 
-      backgroundPosition: 'center', 
-      // backgroundColor:"red"
-    }}
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        // backgroundColor:"red"
+      }}
       className={`template-main py-4 px-4 ${
         editSection ? "t-section-remaining-edit" : ""
       } `}
       onClick={handleParentClick}
     >
       <div>
-
-      <TemplateHeader
-        isEdit={editSection === availableSection.HEADER}
-        onEditSectionClick={onEditSectionClick}
-        templateDetails={templateDetails}
-        availableSection={availableSection}
-        changeTemplateDetails={changeTemplateDetails}
-      />
+        <TemplateHeader
+          isEdit={editSection === availableSection.HEADER}
+          onEditSectionClick={onEditSectionClick}
+          templateDetails={templateDetails}
+          availableSection={availableSection}
+          changeTemplateDetails={changeTemplateDetails}
+        />
+        <Row>
+          <Col xs='8'>1</Col>
+          <Col xs="4">2</Col>
+        </Row>
+        {/* <div ref={componentOne}></div>
+        <div ref={componentTwo}></div> */}
       </div>
     </div>
   );
